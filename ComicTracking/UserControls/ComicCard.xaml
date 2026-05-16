@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="ComicTracking.UserControls.ComicCard"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ComicTracking.UserControls"
+    xmlns:domain="using:Domain"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" Loaded="LoadedControl" Name="Card" DataContextChanged="DataContextLoaded" Height="400" MinWidth="225" MaxWidth="225">
+
+    <UserControl.DataContext>
+        <domain:Comic/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="Back1" Color="#0AFFFFFF"/>
+        <SolidColorBrush x:Key="Back2" Color="#1AFFFFFF"/>
+        <BitmapImage x:Key="DefaultCover" UriSource="/Assets/GenericComicBookCover.jpg"/>
+        <Duration x:Key="Duration">0:0:0.1</Duration>
+        <Vector3Transition x:Key="TransitionDuration" Duration="0:0:0.1"/>
+    </UserControl.Resources>
+
+    <Grid Padding="10" CornerRadius="5" PointerEntered="Entered" PointerExited="Exited" >
+        <Grid.Background>
+            <SolidColorBrush x:Name="Background"  Color="#0AFFFFFF"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Image x:Name="CoverImage" Grid.Row="0"
+               Source="{StaticResource DefaultCover}" HorizontalAlignment="Center"
+               ScaleTransition="{StaticResource TransitionDuration}" TranslationTransition="{StaticResource TransitionDuration}"
+                Scale="{x:Bind CoverScale, Mode=OneWay}" 
+                Translation="{x:Bind CoverTranslate, Mode=OneWay}" />
+
+        <TextBlock Grid.Row="1" Text="{Binding Name}"                 FontSize="18" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" TextTrimming="CharacterEllipsis" MaxWidth="200" MaxLines="3"/>
+        <TextBlock Grid.Row="2" Text="{Binding Details}" Margin="0 5" FontSize="13" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" TextTrimming="CharacterEllipsis" MaxWidth="200" MaxLines="2"/>
+        <!--
+        <ItemsControl ItemsSource="{Binding Tags}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="domain:Tag">
+                    <local:TagCard DataContext="{Binding Mode=OneWay}" Padding="10 0" Margin="0 5 0 0" CornerRadius="5"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        I still can't figure out how to make the grid view adapt
+            to the biggest card if the biggest isn't the first, sad :(
+
+        I kinda figured it out, but the desired height is being weird
+        -->
+        <Border Grid.Row="3" x:Name="StatusPanel" Padding="5" CornerRadius="8" Margin="0 5" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="50">
+            <!--
+            <TextBlock Text="{Binding Status}" HorizontalAlignment="Center" Foreground="Black"/>
+            -->
+        </Border>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualStateGroup.Transitions>
+                    <VisualTransition To="Hover" GeneratedDuration="0:0:0.1"/>
+                    <VisualTransition To="Normal" GeneratedDuration="0:0:0.1"/>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="Normal">
+                </VisualState>
+                <VisualState x:Name="Hover">
+                    <VisualState.Setters>
+                        <Setter Target="Background.Color" Value="#1AFFFFFF"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</UserControl>

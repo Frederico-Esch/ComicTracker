@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ComicTracking (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "ComicTracking (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

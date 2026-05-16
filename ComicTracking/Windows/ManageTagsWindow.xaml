@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="ComicTracking.Windows.ManageTagsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ComicTracking.Windows"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:ComicTracking.UserControls"
+    xmlns:domain="using:Domain"
+    mc:Ignorable="d"
+    Title="Manage Tags" x:Name="Window" Closed="Close">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.Resources>
+            <Style TargetType="ColorPicker">
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="IsAlphaEnabled" Value="False"/>
+                <Setter Property="IsAlphaSliderVisible" Value="False"/>
+                <Setter Property="IsAlphaTextInputVisible" Value="False"/>
+                <Setter Property="IsColorChannelTextInputVisible" Value="False"/>
+                <Setter Property="IsMoreButtonVisible" Value="False"/>
+                <Setter Property="ColorSpectrumShape" Value="Ring"/>
+            </Style>
+        </Grid.Resources>
+
+        <ListView x:Name="TagsList" Grid.Column="0" Margin="5 0" SelectionChanged="TagSelected">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="domain:Tag">
+                    <uc:TagCard DataContext="{Binding Mode=OneWay}"
+                                Padding="10 4"
+                                CornerRadius="5"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <ScrollView Grid.Column="1" Margin="5 0">
+            <StackPanel>
+                <uc:TagCard
+                    x:Name="TagViewer"
+                    HorizontalAlignment="Center" Margin="25"
+                    Padding="25 10"
+                    CornerRadius="15"
+                    FontSize="20"
+                    DataContext="{Binding ElementName=Window, Path=CurrentTag, Mode=TwoWay}"
+                />
+                <TextBlock Text="Name:"/>
+                <TextBox Margin="0 5" x:Name="TagNameBox" KeyDown="KeyDown" Text="{Binding ElementName=Window, Path=TagName, Mode=TwoWay}"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Background 1:" Grid.Column="0" Grid.Row="0"/>
+                    <ColorPicker x:Name="BackgroundColor1" Grid.Column="0" Grid.Row="1"
+                                 IsColorSpectrumVisible="{Binding ElementName=Window, Path=Background1Visible, Mode=TwoWay}"
+                                 IsColorSliderVisible="{Binding ElementName=Window, Path=Background1Visible, Mode=TwoWay}"
+                                 Color="{Binding ElementName=Window, Path=TagColor1, Mode=TwoWay}"
+                                 PointerPressed="ColorPickerPressed"
+                     />
+
+                    <TextBlock Text="Background 2:" Grid.Column="1" Grid.Row="0"/>
+                    <ColorPicker x:Name="BackgroundColor2" Grid.Column="1" Grid.Row="1"
+                                 IsColorSpectrumVisible="{Binding ElementName=Window, Path=Background2Visible, Mode=TwoWay}"
+                                 IsColorSliderVisible="{Binding ElementName=Window, Path=Background2Visible, Mode=TwoWay}"
+                                 Color="{Binding ElementName=Window, Path=TagColor2, Mode=TwoWay}"
+                                 PointerPressed="ColorPickerPressed"
+                     />
+
+                </Grid>
+                <TextBlock Text="Text Color:"/>
+                <ColorPicker x:Name="TextColor"
+                             IsColorSpectrumVisible="{Binding ElementName=Window, Path=TextColorVisible, Mode=TwoWay}"
+                             IsColorSliderVisible="{Binding ElementName=Window, Path=TextColorVisible, Mode=TwoWay}"
+                             Color="{Binding ElementName=Window, Path=TagTextColor, Mode=TwoWay}"
+                             PointerPressed="ColorPickerPressed"
+                 />
+            </StackPanel>
+        </ScrollView>
+        <StackPanel Orientation="Horizontal"
+                    Grid.ColumnSpan="2"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Margin="0" Padding="10"
+                    Spacing="10">
+            <Button x:Name="ReloadButton" Click="ReloadTags">
+                <SymbolIcon Symbol="Refresh"/>
+            </Button>
+            <Button x:Name="NewButton" Click="AddTag">
+                <SymbolIcon Symbol="Add"/>
+            </Button>
+            <Button x:Name="SaveButton" Click="SaveTag">
+                <SymbolIcon Symbol="Save"/>
+            </Button>
+            <Button x:Name="DeleteButton" Click="DeleteTag">
+                <SymbolIcon Symbol="Delete"/>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

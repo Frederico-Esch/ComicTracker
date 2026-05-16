@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="ComicTracking.Windows.EditComicWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ComicTracking.Windows"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:ComicTracking.UserControls"
+    xmlns:domain="using:Domain"
+    mc:Ignorable="d"
+    Title="Edit Comic" Closed="OnClosed">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="RootGrid">
+        <Grid.Resources>
+            <ControlTemplate x:Key="CustomRadioButtonTemplate" TargetType="RadioButton">
+                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="3" Padding="5">
+                    <ContentPresenter HorizontalAlignment="Center"/>
+                </Border>
+            </ControlTemplate>
+            <Style x:Key="CustomRadioButton" TargetType="RadioButton">
+                <Setter Property="Template" Value="{StaticResource CustomRadioButtonTemplate}"/>
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="GroupName" Value="StatusGroup"/>
+            </Style>
+
+            <BitmapImage x:Key="DefaultImage" UriSource="/Assets/GenericComicBookCover.jpg"/>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Image
+            x:Name="CoverImage"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Margin="10"
+            PointerPressed="ChangeImage"
+            PointerEntered="EnteredImage"
+            PointerExited="ExitedImage"
+            Source="{StaticResource DefaultImage}"
+        />
+
+        <ScrollView Grid.Column="1">
+            <StackPanel Margin="10">
+                <TextBlock Text="Name:"    FontSize="15"/>
+                <TextBox x:Name="NameBox" Margin="0 5 0 10" FontSize="15"/>
+                <TextBlock Text="Details:" FontSize="15"/>
+                <TextBox x:Name="DetBox" Margin="0 5 0 10" FontSize="15" TextWrapping="Wrap" AcceptsReturn="True" />
+                <TextBlock Text="Status:"  FontSize="15"/>
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <RadioButton Style="{StaticResource CustomRadioButton}" IsChecked="True"
+                        x:Name="UnreadButton"
+                        Tag="Unread" Content="Unread" 
+                        Checked="CheckedRadioButton" Unchecked="UncheckedRadioButton"
+                        PointerEntered="EnteredRadioButton" PointerExited="ExitedRadioButton"
+                    />
+                    <RadioButton Style="{StaticResource CustomRadioButton}"
+                        x:Name="ProgressButton"
+                        Tag="Progress" Content="Progress"
+                        Checked="CheckedRadioButton" Unchecked="UncheckedRadioButton"
+                        PointerEntered="EnteredRadioButton" PointerExited="ExitedRadioButton"
+                    />
+                    <RadioButton Style="{StaticResource CustomRadioButton}"
+                        x:Name="FinishedButton"
+                        Tag="Finished" Content="Finished"
+                        Checked="CheckedRadioButton" Unchecked="UncheckedRadioButton"
+                        PointerEntered="EnteredRadioButton" PointerExited="ExitedRadioButton"
+                    />
+                </StackPanel>
+
+                <TextBlock Text="Tags: " FontSize="15" Margin="0 0 0 10"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Column="0" Grid.Row="0"
+                        HorizontalAlignment="Center"
+                        Margin="0 5"
+                        Text="Selected Tags"/>
+                    <TextBox x:Name="SelectedFilter"
+                        Grid.Column="0" Grid.Row="1"
+                        KeyDown="KeyDown"/>
+                    <ListView Grid.Column="0" Grid.Row="2" x:Name="SelectedTags"
+                              AllowDrop="True" CanDragItems="True" CanDrag="True"
+                              DragEnter="IsDragging" DragItemsStarting="DragStarted" DragItemsCompleted="DragComplete">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="domain:Tag">
+                                <uc:TagCard DataContext="{Binding Mode=OneWay}" Padding="5 3" CornerRadius="5" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <StackPanel Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Spacing="5" Margin="5 0">
+                        <Button Click="AddTag">
+                            <SymbolIcon Symbol="Back"/>
+                        </Button>
+                        <Button Click="RemoveTag">
+                            <SymbolIcon Symbol="Forward"/>
+                        </Button>
+                    </StackPanel>
+
+                    <TextBlock Grid.Column="2" Grid.Row="0"
+                        HorizontalAlignment="Center"
+                        Margin="0 5"
+                        Text="Available Tags"/>
+                    <TextBox x:Name="AvailableFilter"
+                        Grid.Column="2" Grid.Row="1"
+                        KeyDown="KeyDown"/>
+                    <ListView Grid.Column="2" Grid.Row="2" x:Name="AvailableTags"
+                              AllowDrop="True" CanDragItems="True" CanDrag="True"
+                              DragEnter="IsDragging" DragItemsStarting="DragStarted" DragItemsCompleted="DragComplete">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="domain:Tag">
+                                <uc:TagCard DataContext="{Binding Mode=OneWay}" Padding="5 3" CornerRadius="5"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </StackPanel>
+        </ScrollView>
+
+        <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2"
+                    Spacing="10"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10 10">
+            <Button x:Name="AddButton" Click="Add" Padding="8">
+                <SymbolIcon Symbol="Add"/>
+            </Button>
+            <Button x:Name="SaveButton" Click="Save" Visibility="Collapsed" Padding="8">
+                <SymbolIcon Symbol="Save"/>
+            </Button>
+            <Button x:Name="DeleteButton" Click="Delete" Visibility="Collapsed" Padding="8">
+                <SymbolIcon Symbol="Delete" />
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>
