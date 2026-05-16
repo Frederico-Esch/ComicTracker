@@ -29,10 +29,27 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
+            <!--
             <Button Grid.Column="0" Click="ButtonManageTags">Manage Tags</Button>
+            -->
+            <Button Grid.Column="0" Click="ButtonManageTags"
+                    Padding="8">
+                <SymbolIcon Symbol="Tag"/>
+            </Button>
+            <!--
             <Button Grid.Column="1" Click="FilterTags">Filter Tags</Button>
+            -->
+            <Button Grid.Column="1" Click="FilterTags"
+                    Padding="8">
+                <SymbolIcon Symbol="Filter"/>
+            </Button>
             <TextBox Grid.Column="2"/>
-            <Button Grid.Column="3" FontSize="18" FontFamily="Segoe Fluent Icons" Content="&#57623;" Click="ButtonReload"/>
+            <Button Grid.Column="3"
+                    Padding="8"
+                    FontSize="18" FontFamily="Segoe Fluent Icons" Content="&#57623;"
+                    Click="ButtonReload"
+                    Background="MediumPurple"
+            />
         </Grid>
 
         <GridView x:Name="ComicList" CanReorderItems="True" AllowDrop="True"
@@ -54,7 +71,9 @@
         </GridView>
 
         <Button
-            Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="20" Padding="10"
+            Grid.Row="0" Grid.RowSpan="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"
+            Margin="20" Padding="10"
+            Background="CornflowerBlue" CornerRadius="20"
             FontSize="25" FontFamily="Segoe Fluent Icons" Content="&#57609;" 
             Click="CreateComic"
             />

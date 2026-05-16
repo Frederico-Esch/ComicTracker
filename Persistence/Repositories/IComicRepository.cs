@@ -12,6 +12,7 @@ namespace Persistence.Repositories
         public void Add(Comic comic);
         public void Delete(Comic comic);
         public List<Comic> GetAllComics();
+        public List<Comic> GetFiltered(List<Tag> tags);
         public Comic? FindOne(Guid id);
     }
 }

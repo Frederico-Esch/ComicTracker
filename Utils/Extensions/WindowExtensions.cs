@@ -30,7 +30,9 @@ namespace Utils.Extensions
                     action?.Invoke();
                 }
             };
+            var position = owner.AppWindow.Position;
             child.ApplyCustomizations();
+            child.AppWindow.Move(position);
             child.Activate();
             owner.AppWindow.Hide();
         }

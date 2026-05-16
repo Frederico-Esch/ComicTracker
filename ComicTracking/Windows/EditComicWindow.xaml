@@ -136,13 +136,16 @@
         <StackPanel Orientation="Horizontal" Grid.ColumnSpan="2"
                     Spacing="10"
                     HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10 10">
-            <Button x:Name="AddButton" Click="Add" Padding="8">
+            <Button x:Name="AddButton" Click="Add" Padding="8"
+                    Background="LightGreen" Foreground="Black">
                 <SymbolIcon Symbol="Add"/>
             </Button>
-            <Button x:Name="SaveButton" Click="Save" Visibility="Collapsed" Padding="8">
+            <Button x:Name="SaveButton" Click="Save" Visibility="Collapsed" Padding="8"
+                    Background="LightGreen" Foreground="Black">
                 <SymbolIcon Symbol="Save"/>
             </Button>
-            <Button x:Name="DeleteButton" Click="Delete" Visibility="Collapsed" Padding="8">
+            <Button x:Name="DeleteButton" Click="Delete" Visibility="Collapsed" Padding="8"
+                    Background="Salmon" Foreground="Black">
                 <SymbolIcon Symbol="Delete" />
             </Button>
         </StackPanel>

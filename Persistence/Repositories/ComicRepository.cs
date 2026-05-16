@@ -28,6 +28,17 @@ namespace Persistence.Repositories
                 .ToList();
         }
 
+        public List<Comic> GetFiltered(List<Tag> tags)
+        {
+            var tagIds = tags.Select(t => t.Id).ToHashSet();
+
+            return context.Comics
+                .Include(c => c.Tags)
+                .OrderBy(c => c.Order)
+                .Where(c => c.Tags.Any(t => tagIds.Contains(t.Id)))
+                .ToList();
+        }
+
         public Comic? FindOne(Guid id)
         {
             return context.Comics

@@ -98,16 +98,20 @@
                     HorizontalAlignment="Right" VerticalAlignment="Bottom"
                     Margin="0" Padding="10"
                     Spacing="10">
-            <Button x:Name="ReloadButton" Click="ReloadTags">
+            <Button x:Name="ReloadButton" Click="ReloadTags" Padding="8"
+                    Background="MediumPurple">
                 <SymbolIcon Symbol="Refresh"/>
             </Button>
-            <Button x:Name="NewButton" Click="AddTag">
+            <Button x:Name="NewButton" Click="AddTag" Padding="8"
+                    Background="LightGreen" Foreground="Black">
                 <SymbolIcon Symbol="Add"/>
             </Button>
-            <Button x:Name="SaveButton" Click="SaveTag">
+            <Button x:Name="SaveButton" Click="SaveTag" Padding="8"
+                    Background="LightGreen" Foreground="Black">
                 <SymbolIcon Symbol="Save"/>
             </Button>
-            <Button x:Name="DeleteButton" Click="DeleteTag">
+            <Button x:Name="DeleteButton" Click="DeleteTag" Padding="8"
+                    Background="Salmon" Foreground="Black">
                 <SymbolIcon Symbol="Delete"/>
             </Button>
         </StackPanel>

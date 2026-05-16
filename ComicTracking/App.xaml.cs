@@ -20,11 +20,9 @@ namespace ComicTracking
         {
             var serviceCollection = new ServiceCollection();
 
-            serviceCollection.AddTransient<MainWindow>();
-            serviceCollection.AddTransient<EditComicWindow>();
-            serviceCollection.AddTransient<ManageTagsWindow>();
-
+            ConfigWindows(serviceCollection);
             ConfigAppSettings(serviceCollection);
+
             serviceCollection.ConfigRepositories();
 
             services = serviceCollection.BuildServiceProvider();
@@ -32,6 +30,13 @@ namespace ComicTracking
             InitializeComponent();
         }
         
+        private void ConfigWindows(ServiceCollection serviceCollection)
+        {
+            serviceCollection.AddTransient<MainWindow>();
+            serviceCollection.AddTransient<EditComicWindow>();
+            serviceCollection.AddTransient<ManageTagsWindow>();
+            serviceCollection.AddTransient<FilterTagsWindow>();
+        }
 
         private void ConfigAppSettings(ServiceCollection services)
         {

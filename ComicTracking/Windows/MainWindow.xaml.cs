@@ -9,6 +9,7 @@ using System;
 using WinRT.Interop;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,6 +23,7 @@ public sealed partial class MainWindow : Window
     private IUnitOfWork unitOfWork;
     IServiceProvider serviceProvider;
     private ReorderableCollection<Comic> comics = [];
+    private List<Tag> FilteredTags = [];
 
 
     public MainWindow(IServiceProvider _serviceProvider, IComicRepository _comicRepository, IUnitOfWork _unitOfWork)
@@ -36,7 +38,10 @@ public sealed partial class MainWindow : Window
 
     private void ReloadComics()
     {
-        comics = new (comicRepository.GetAllComics());
+        comics =
+            FilteredTags.Count == 0
+            ? new(comicRepository.GetAllComics())
+            : new(comicRepository.GetFiltered(FilteredTags));
         comics.OnElementInserted += (collection, item, index) => {
             var oldOrder = -1*item.Order;
             if (oldOrder < 0) return;
@@ -74,7 +79,14 @@ public sealed partial class MainWindow : Window
 
     private void FilterTags(object sender, RoutedEventArgs e)
     {
-
+        var window = serviceProvider.GetRequiredService<FilterTagsWindow>();
+        if (FilteredTags.Count > 0)
+            window.SetInitialTags(FilteredTags);
+        this.NavigateTo(window, () =>
+        {
+            FilteredTags = window.TagsSelected;
+            ReloadComics();
+        });
     }
 
     private async void ContextDelete(object sender, RoutedEventArgs e)
