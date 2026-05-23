@@ -103,5 +103,7 @@
     <PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Title>Comic Tracking</Title>
+    <PackageCertificateThumbprint>0C5793471ADD9089A454F27FF44500161796954C</PackageCertificateThumbprint>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
   </PropertyGroup>
 </Project>

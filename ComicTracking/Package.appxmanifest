@@ -15,7 +15,7 @@
   <mp:PhoneIdentity PhoneProductId="29d8123e-71d2-4d26-9460-4e3174ccaf28" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>ComicTracking</DisplayName>
+    <DisplayName>Comic Tracking</DisplayName>
     <PublisherDisplayName>frede</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
