@@ -54,10 +54,11 @@
 
         <GridView x:Name="ComicList" CanReorderItems="True" AllowDrop="True"
                   Background="Transparent" Grid.Row="1" Padding="10"
+                  ItemClick="OpenComic" IsItemClickEnabled="True"
                   SelectionMode="None">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="domain:Comic">
-                    <userControls:ComicCard DataContext="{Binding Mode=OneWay}" AllowDrop="False" >
+                    <userControls:ComicCard DataContext="{Binding Mode=OneWay}" AllowDrop="False">
                         <userControls:ComicCard.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Text="Open"   Tag="open"   Icon="OpenLOcal" Click="ContextOpen"/>

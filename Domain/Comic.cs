@@ -25,6 +25,7 @@ namespace Domain
         public int Order { get; set; }
 
         public virtual ICollection<Tag> Tags { get; set; } = [];
+        public virtual ICollection<ComicFile> Files { get; set; } = [];
 
 
         public Comic() { Id = Guid.NewGuid(); }

@@ -28,6 +28,8 @@ namespace Persistence.Repositories
 
         public bool HasChanges() => context.ChangeTracker.HasChanges();
 
+        public async Task SaveAsync() => await context.SaveChangesAsync();
+
         public void Save() => context.SaveChanges();
 
         public void ScheduleSave()

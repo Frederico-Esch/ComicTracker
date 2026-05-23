@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="ComicTracking.Windows.ComicWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ComicTracking.Windows"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:domain="using:Domain"
+    xmlns:uc="using:ComicTracking.UserControls"
+    mc:Ignorable="d"
+    Title="Comic" x:Name="This" Closed="OnClosing">
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
+
+    <Grid x:Name="Root">
+        <Grid.DataContext>
+            <domain:Comic/>
+        </Grid.DataContext>
+
+        <Grid.Resources>
+            <BitmapImage x:Key="DefaultCover" UriSource="/Assets/GenericComicBookCover.jpg"/>
+
+            <Style x:Key="StatusBorder" TargetType="Border">
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="VerticalAlignment" Value="Stretch"/>
+
+                <Setter Property="Width" Value="50"/>
+
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Padding" Value="5"/>
+                <Setter Property="CornerRadius" Value="5"/>
+
+                <Setter Property="Background" Value="Gray"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+            </Style>
+            <Style x:Key="StatusTextBlock" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="Black"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+            </Style>
+        </Grid.Resources>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="CoverImage" Grid.Row="0"
+                   Source="{StaticResource DefaultCover}" />
+            <Grid Grid.Row="1"
+                  Height="35"
+                  PointerEntered="Hover" PointerExited="HoverEnded">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" x:Name="UnreadBorder" Tag="Unread"
+                        PointerPressed="ChangeStatus"
+                        Style="{StaticResource StatusBorder}" Background="{StaticResource Unread}" >
+                    <TextBlock x:Name="UnreadBox" Text="Unread" Style="{StaticResource StatusTextBlock}"/>
+                </Border>
+
+                <Border Grid.Column="1" x:Name="ProgressBorder" Tag="Progress"
+                        PointerPressed="ChangeStatus"
+                        Style="{StaticResource StatusBorder}">
+                    <TextBlock x:Name="ProgressBox" Text="Progress" Style="{StaticResource StatusTextBlock}"/>
+                </Border>
+
+                <Border Grid.Column="2" x:Name="FinishedBorder" Tag="Finished"
+                        PointerPressed="ChangeStatus"
+                        Style="{StaticResource StatusBorder}">
+                    <TextBlock x:Name="FinishedBox" Text="Finished" Style="{StaticResource StatusTextBlock}"/>
+                </Border>
+            </Grid>
+        </Grid>
+        <Grid Grid.Column="1" Margin="0 15 15 0" RowSpacing="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Text="{Binding ElementName=This, Path=DataContext.Name, Mode=OneWay}"
+                       FontSize="25" HorizontalAlignment="Left"/>
+
+            <ScrollView Grid.Row="1">
+                <StackPanel Spacing="5" Margin="5 0">
+                    <TextBox x:Name="DetailsBox"
+                             Text="{Binding ElementName=This, Path=DataContext.Details, Mode=OneWay}"
+                             IsReadOnly="True" IsRightTapEnabled="True" AcceptsReturn="True"/>
+
+                    <StackPanel Orientation="Horizontal" Spacing="5"
+                                Padding="5" HorizontalAlignment="Right">
+                        <Button x:Name="EditButton" Click="EditClick"
+                                Padding="5" Visibility="Visible">
+                            <SymbolIcon Symbol="Edit"/>
+                        </Button>
+                        <Button x:Name="AcceptButton" Click="AcceptClick"
+                                Padding="5" Visibility="Collapsed"
+                                Background="LightGreen" Foreground="Black">
+                            <SymbolIcon Symbol="Accept"/>
+                        </Button>
+                        <Button x:Name="DiscardButton" Click="DiscardClick"
+                                Padding="5" Visibility="Collapsed"
+                                Background="Salmon" Foreground="Black">
+                            <SymbolIcon Symbol="Delete"/>
+                        </Button>
+                    </StackPanel>
+
+
+                    <ListView x:Name="ListFiles" Margin="5 0" MaxHeight="500"
+                              CanReorderItems="True" AllowDrop="True"
+                              SelectionChanged="FileSelected">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="domain:ComicFile">
+                                <Grid ColumnSpacing="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <SymbolIcon Grid.Column="0" Symbol="Stop" Foreground="Gray"/>
+                                    <SymbolIcon Grid.Column="0" Symbol="Accept" Foreground="Lime" Visibility="Collapsed" Loaded="SymbolLoaded"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5 0" HorizontalAlignment="Right"
+                                Spacing="5">
+                        <Button Padding="8"
+                                Click="AddFile">
+                            <SymbolIcon Symbol="Add"/>
+                        </Button>
+                        <Button x:Name="ReadButton" Padding="8" Visibility="Collapsed"
+                                Click="ReadFile">
+                            <SymbolIcon x:Name="ReadButtonIcon" Symbol="View"/>
+                        </Button>
+                        <Button x:Name="OpenButton" Padding="8" Visibility="Collapsed"
+                                Background="SkyBlue" Foreground="Black"
+                                Click="OpenFile">
+                            <SymbolIcon Symbol="OpenFile"/>
+                        </Button>
+                        <Button x:Name="DeleteButton" Padding="8" Visibility="Collapsed"
+                                Background="Salmon" Foreground="Black"
+                                Click="DeleteFile">
+                            <SymbolIcon Symbol="Delete"/>
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollView>
+
+        </Grid>
+
+        <Button x:Name="SaveButton" Click="SaveClick" Grid.ColumnSpan="2"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Margin="10" Padding="5"
+                Background="LightGreen" Foreground="Black"
+                Visibility="Collapsed">
+            <SymbolIcon Symbol="Save" />
+        </Button>
+
+        <Border x:Name="ProgressBackground" Grid.ColumnSpan="2" Visibility="Collapsed" Background="#0FFFFFFF">
+            <ProgressRing x:Name="Progress"/>
+        </Border>
+    </Grid>
+</Window>

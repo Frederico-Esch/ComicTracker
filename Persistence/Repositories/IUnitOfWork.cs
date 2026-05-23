@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Persistence.Repositories
+namespace Persistence.Repositories;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        public void Save();
-        public void ScheduleSave();
-        public bool HasChanges();
-        public void DiscardChanges();
-    }
+    public void Save();
+    public Task SaveAsync();
+    public void ScheduleSave();
+    public bool HasChanges();
+    public void DiscardChanges();
 }

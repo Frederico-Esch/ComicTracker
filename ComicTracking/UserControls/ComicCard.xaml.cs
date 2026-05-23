@@ -2,6 +2,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
@@ -69,20 +70,56 @@ namespace ComicTracking.UserControls
             LoadData();
         }
 
+        private enum StyleEffect
+        {
+            Normal,
+            Hover,
+            Pressed
+        }
+        private void ApplyEffect(StyleEffect effect)
+        {
+            switch (effect)
+            {
+                case StyleEffect.Normal:
+                    VisualStateManager.GoToState(this, "Normal", true);
+                    CoverScaleValue = 1;
+                    break;
+                case StyleEffect.Hover:
+                    VisualStateManager.GoToState(this,  "Hover", true);
+                    CoverScaleValue = 0.8f;
+                    break;
+                case StyleEffect.Pressed:
+                    VisualStateManager.GoToState(this, "Pressed", true);
+                    CoverScaleValue = 1;
+                    break;
+            }
+        }
         private void HoverEffect(bool active)
         {
             VisualStateManager.GoToState(this, active ? "Hover" : "Normal", true);
             CoverScaleValue = active ? 0.8f : 1;
         }
 
-        private void Entered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Entered(object sender, PointerRoutedEventArgs e)
         {
-            HoverEffect(true);
+            //HoverEffect(true);
+            ApplyEffect(StyleEffect.Hover);
         }
 
-        private void Exited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void Exited(object sender, PointerRoutedEventArgs e)
         {
-            HoverEffect(false);
+            //HoverEffect(false);
+            ApplyEffect(StyleEffect.Normal);
+        }
+
+        private void Clicked(object sender, PointerRoutedEventArgs e)
+        {
+            ApplyEffect(StyleEffect.Pressed);
+        }
+
+        private void Released(object sender, PointerRoutedEventArgs e)
+        {
+            ApplyEffect(StyleEffect.Hover);
         }
     }
 }

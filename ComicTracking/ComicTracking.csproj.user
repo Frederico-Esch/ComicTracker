@@ -13,6 +13,9 @@
     <None Update="Package.appxmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Page Update="Windows\ComicWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Windows\FilterTagsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

@@ -1,11 +1,10 @@
 using Domain;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Persistence.Repositories;
 using System.Collections.Generic;
 using System.Linq;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using FilterType = Persistence.Repositories.IComicRepository.FilterType;
 
 namespace ComicTracking.Windows;
 
@@ -14,6 +13,7 @@ internal class CheckTag(Tag tag, bool isChecked)
     public Tag Tag { get; set; } = tag;
     public bool IsChecked { get; set; } = isChecked;
 }
+
 public sealed partial class FilterTagsWindow : Window
 {
     private bool AcceptFilter = false;
@@ -26,6 +26,7 @@ public sealed partial class FilterTagsWindow : Window
             return tags.Where(t => t.IsChecked).Select(t => t.Tag).ToList();
         }
     }
+    public FilterType Filter { get; set; } = FilterType.Any;
 
     private readonly ITagRepository tagRepository;
 
@@ -34,15 +35,17 @@ public sealed partial class FilterTagsWindow : Window
         tagRepository = _tagRepository;
 
         InitializeComponent();
+        FilterTypeCombo.ItemsSource = new List<FilterType>() { FilterType.Any, FilterType.All };
     }
 
-    public void SetInitialTags(List<Tag> initialTags)
+    public void SetInitialTags(List<Tag> initialTags, FilterType filterType)
     {
         var tagIds = initialTags.Select(tag => tag.Id).ToHashSet();
         var tags = tagRepository.GetAll()
             .Select(t => new CheckTag(t, tagIds.Contains(t.Id)))
             .ToList();
         TagList.ItemsSource = tags;
+        FilterTypeCombo.SelectedItem = filterType;
     }
 
     private void Loaded(object sender, RoutedEventArgs e)
@@ -60,5 +63,11 @@ public sealed partial class FilterTagsWindow : Window
     {
         AcceptFilter = true;
         Close();
+    }
+
+    private void FilterTypeChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not ComboBox { SelectedItem: FilterType filter }) return;
+        Filter = filter;
     }
 }

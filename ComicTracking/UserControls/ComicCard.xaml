@@ -20,7 +20,8 @@
         <Vector3Transition x:Key="TransitionDuration" Duration="0:0:0.1"/>
     </UserControl.Resources>
 
-    <Grid Padding="10" CornerRadius="5" PointerEntered="Entered" PointerExited="Exited" >
+    <Grid x:Name="GridRoot" Padding="10" CornerRadius="5"
+          PointerEntered="Entered" PointerPressed="Clicked" PointerReleased="Released" PointerExited="Exited">
         <Grid.Background>
             <SolidColorBrush x:Name="Background"  Color="#0AFFFFFF"/>
         </Grid.Background>
@@ -68,6 +69,11 @@
                 <VisualState x:Name="Hover">
                     <VisualState.Setters>
                         <Setter Target="Background.Color" Value="#1AFFFFFF"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Pressed">
+                    <VisualState.Setters>
+                        <Setter Target="Background.Color" Value="#05FFFFFF"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

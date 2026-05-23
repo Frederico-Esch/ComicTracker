@@ -16,6 +16,8 @@ namespace Persistence
     {
         public DbSet<Comic> Comics { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<ComicFile> ComicFiles { get; set; }
+        public DbSet<ComicFileData> ComicFileData { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -83,6 +85,10 @@ namespace Persistence
                 model.Property(c => c.Order)
                     .HasColumnName("Order");
 
+                model.HasMany(c => c.Files)
+                    .WithOne(f => f.Comic)
+                    .HasForeignKey(c => c.ComicId);
+
                 model
                     .HasMany(c => c.Tags)
                     .WithMany(t => t.Comics)
@@ -97,6 +103,7 @@ namespace Persistence
                             model.Property(ct => ct.TagId).HasColumnName("TagId").HasConversion(GuidToBytes, BytesToGuid);
                         }
                     );
+
             });
 
             modelBuilder.Entity<Tag>(model =>
@@ -133,6 +140,53 @@ namespace Persistence
                     .HasColumnName("TextColor")
                     .HasConversion(HexToColor, hex => ColorToHex(hex));
 
+            });
+
+            modelBuilder.Entity<ComicFile>(model =>
+            {
+                model.ToTable("ComicFiles").HasKey(f => f.Id);
+
+                model.Property(f => f.Id)
+                    .HasColumnName("Id")
+                    .HasConversion(GuidToBytes, BytesToGuid);
+
+                model.Property(f => f.Name)
+                    .HasColumnName("Name");
+
+                //model.Property(f => f.File)
+                //    .HasColumnName("File");
+
+                model.Property(f => f.IsFinished)
+                    .HasColumnName("IsFinished");
+
+                model.Property(f => f.Order)
+                    .HasColumnName("Order");
+
+                model.Property(f => f.ComicId)
+                    .HasColumnName("ComicId")
+                    .HasConversion(GuidToBytes, BytesToGuid);
+
+                model.HasOne(f => f.Data)
+                    .WithOne(d => d.File)
+                    .HasForeignKey<ComicFileData>(d => d.ComicFileId);
+                    
+                    
+            });
+
+            modelBuilder.Entity<ComicFileData>(model =>
+            {
+                model.ToTable("ComicFileData").HasKey(d => d.Id);
+
+                model.Property(d => d.Id)
+                    .HasColumnName("Id")
+                    .HasConversion(GuidToBytes, BytesToGuid);
+
+                model.Property(d => d.ComicFileId)
+                    .HasColumnName("ComicFileId")
+                    .HasConversion(GuidToBytes, BytesToGuid);
+
+                model.Property(d => d.Data)
+                    .HasColumnName("Data");
             });
         }
     }

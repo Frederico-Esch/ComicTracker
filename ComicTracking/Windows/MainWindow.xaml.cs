@@ -4,12 +4,11 @@ using Persistence.Repositories;
 using Utils.Collections;
 using System.Linq;
 using Utils.Extensions;
-using Windows.UI.Popups;
 using System;
-using WinRT.Interop;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using FilterType = Persistence.Repositories.IComicRepository.FilterType;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -23,7 +22,8 @@ public sealed partial class MainWindow : Window
     private IUnitOfWork unitOfWork;
     IServiceProvider serviceProvider;
     private ReorderableCollection<Comic> comics = [];
-    private List<Tag> FilteredTags = [];
+    private List<Tag> filteredTags = [];
+    private FilterType filterType = FilterType.Any;
 
 
     public MainWindow(IServiceProvider _serviceProvider, IComicRepository _comicRepository, IUnitOfWork _unitOfWork)
@@ -39,9 +39,9 @@ public sealed partial class MainWindow : Window
     private void ReloadComics()
     {
         comics =
-            FilteredTags.Count == 0
+            filteredTags.Count == 0
             ? new(comicRepository.GetAllComics())
-            : new(comicRepository.GetFiltered(FilteredTags));
+            : new(comicRepository.GetFiltered(filteredTags, filterType));
         comics.OnElementInserted += (collection, item, index) => {
             var oldOrder = -1*item.Order;
             if (oldOrder < 0) return;
@@ -57,6 +57,7 @@ public sealed partial class MainWindow : Window
         };
         comics.OnElementRemoved += (_, item, index) => { item.Order *= -1;};
         ComicList.ItemsSource = comics;
+        ComicList.CanReorderItems = filteredTags.Count == 0;
     }
 
     #region Buttons
@@ -80,11 +81,12 @@ public sealed partial class MainWindow : Window
     private void FilterTags(object sender, RoutedEventArgs e)
     {
         var window = serviceProvider.GetRequiredService<FilterTagsWindow>();
-        if (FilteredTags.Count > 0)
-            window.SetInitialTags(FilteredTags);
+        if (filteredTags.Count > 0)
+            window.SetInitialTags(filteredTags, filterType);
         this.NavigateTo(window, () =>
         {
-            FilteredTags = window.TagsSelected;
+            filteredTags = window.TagsSelected;
+            filterType = window.Filter;
             ReloadComics();
         });
     }
@@ -126,6 +128,18 @@ public sealed partial class MainWindow : Window
 
     private void ContextOpen(object sender, RoutedEventArgs e)
     {
+        if (sender is not MenuFlyoutItem { DataContext: Comic comic }) return;
+        var window = serviceProvider.GetRequiredService<ComicWindow>();
+        window.DataContext = comic;
+        this.NavigateTo(window, ReloadComics);
+    }
+
+    private void OpenComic(object sender, ItemClickEventArgs e)
+    {
+        if (e.ClickedItem is not Comic comic) return;
+        var window = serviceProvider.GetRequiredService<ComicWindow>();
+        window.DataContext = comic;
+        this.NavigateTo(window, ReloadComics);
     }
 
     #endregion
@@ -137,7 +151,7 @@ public sealed partial class MainWindow : Window
 
         var dialog = new ContentDialog()
         {
-            Title = "Changes unsaved",
+            Title = "Unsaved Changes",
             Content = "Save changes before exiting?",
             CloseButtonText = "Cancel",
             PrimaryButtonText = "Save",
@@ -152,9 +166,10 @@ public sealed partial class MainWindow : Window
         {
             case ContentDialogResult.None: return;
             case ContentDialogResult.Primary: unitOfWork.Save(); break;
-            default: break;
+            default: unitOfWork.DiscardChanges(); break;
         }
         Close();
     }
     #endregion
+
 }
