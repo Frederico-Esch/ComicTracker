@@ -80,6 +80,7 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
         {
             CoverImage.Source = Root.Resources["DefaultCover"] as BitmapImage;
         }
+        Title = DataContext.Name;
         ChangeStatus();
         LoadFiles();
     }
