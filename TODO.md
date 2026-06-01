@@ -1,3 +1,7 @@
+# URGENT
+
+Fix **ALL** Search Bars (MainWindow and FilterTags), I forgot to implement a filter apparently lol
+
 # Next
 
 1. Disable auto_vacuum in db
