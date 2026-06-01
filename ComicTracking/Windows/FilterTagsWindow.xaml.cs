@@ -5,6 +5,8 @@ using Persistence.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 using FilterType = Persistence.Repositories.IComicRepository.FilterType;
+using Windows.System;
+using System.Collections.ObjectModel;
 
 namespace ComicTracking.Windows;
 
@@ -17,13 +19,18 @@ internal class CheckTag(Tag tag, bool isChecked)
 public sealed partial class FilterTagsWindow : Window
 {
     private bool AcceptFilter = false;
-    public List<Tag> TagsSelected
+    private List<CheckTag> AllTags = [];
+    private List<Tag> selectedTags
+    {
+        get => AllTags.Where(t => t.IsChecked).Select(t => t.Tag).ToList();
+    }
+    public List<Tag> SelectedTags
     {
         get
         {
-            if (!AcceptFilter || TagList.ItemsSource is not List<CheckTag> tags) return [];
+            if (!AcceptFilter) return [];
 
-            return tags.Where(t => t.IsChecked).Select(t => t.Tag).ToList();
+            return selectedTags;
         }
     }
     public FilterType Filter { get; set; } = FilterType.Any;
@@ -38,25 +45,35 @@ public sealed partial class FilterTagsWindow : Window
         FilterTypeCombo.ItemsSource = new List<FilterType>() { FilterType.Any, FilterType.All };
     }
 
-    public void SetInitialTags(List<Tag> initialTags, FilterType filterType)
+    public void SetInitialTags(List<Tag> initialTags, FilterType filterType, string? filter = null)
     {
         var tagIds = initialTags.Select(tag => tag.Id).ToHashSet();
-        var tags = tagRepository.GetAll()
+        AllTags = tagRepository.GetAll()
             .Select(t => new CheckTag(t, tagIds.Contains(t.Id)))
             .ToList();
+
+        var tags = (filter is { } term)
+            ? AllTags.Where(t => t.Tag.Name.Contains(term, System.StringComparison.InvariantCultureIgnoreCase))
+            : AllTags;
+
         TagList.ItemsSource = tags;
         FilterTypeCombo.SelectedItem = filterType;
     }
 
+    private void ReloadTags()
+    {
+        AllTags = tagRepository.GetAll().Select(t => new CheckTag(t, false)).ToList();
+        TagList.ItemsSource = AllTags;
+    }
+
     private void Loaded(object sender, RoutedEventArgs e)
     {
-        if (TagList.ItemsSourceView == null)
-            TagList.ItemsSource = tagRepository.GetAll().Select(t => new CheckTag(t, false)).ToList();
+        if (TagList.ItemsSourceView == null) ReloadTags();
     }
 
     private void ClearAll(object sender, RoutedEventArgs e)
     {
-        TagList.ItemsSource = tagRepository.GetAll().Select(t => new CheckTag(t, false)).ToList();
+        ReloadTags();
     }
 
     private void Accept(object sender, RoutedEventArgs e)
@@ -69,5 +86,18 @@ public sealed partial class FilterTagsWindow : Window
     {
         if (sender is not ComboBox { SelectedItem: FilterType filter }) return;
         Filter = filter;
+    }
+
+    private void FilterKeyDown(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Enter)
+        {
+            e.Handled = true;
+            var search = TagFilterBox.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(search))
+                SetInitialTags(selectedTags, Filter, search);
+            else
+                SetInitialTags(selectedTags, Filter);
+        }
     }
 }

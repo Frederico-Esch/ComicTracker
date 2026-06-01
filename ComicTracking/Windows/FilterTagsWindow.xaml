@@ -29,7 +29,7 @@
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox x:Name="TagFilterBox" Grid.Column="0"/>
+            <TextBox x:Name="TagFilterBox" Grid.Column="0" AcceptsReturn="False" KeyDown="FilterKeyDown"/>
 
             <ComboBox x:Name="FilterTypeCombo" Grid.Column="1" SelectedIndex="0" SelectionChanged="FilterTypeChanged"/>
             <Button Grid.Column="2" VerticalAlignment="Bottom" HorizontalAlignment="Right"

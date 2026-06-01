@@ -43,7 +43,7 @@
                     Padding="8">
                 <SymbolIcon Symbol="Filter"/>
             </Button>
-            <TextBox Grid.Column="2"/>
+            <TextBox x:Name="SearchTextBox" Grid.Column="2" AcceptsReturn="False" KeyDown="SearchKey"/>
             <Button Grid.Column="3"
                     Padding="8"
                     FontSize="18" FontFamily="Segoe Fluent Icons" Content="&#57623;"

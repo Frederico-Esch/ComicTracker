@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using FilterType = Persistence.Repositories.IComicRepository.FilterType;
+using Windows.System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,6 +23,7 @@ public sealed partial class MainWindow : Window
     private IUnitOfWork unitOfWork;
     IServiceProvider serviceProvider;
     private ReorderableCollection<Comic> comics = [];
+    private string? searchTerm = null;
     private List<Tag> filteredTags = [];
     private FilterType filterType = FilterType.Any;
 
@@ -38,10 +40,17 @@ public sealed partial class MainWindow : Window
 
     private void ReloadComics()
     {
-        comics =
-            filteredTags.Count == 0
-            ? new(comicRepository.GetAllComics())
-            : new(comicRepository.GetFiltered(filteredTags, filterType));
+        var query = filteredTags.Count == 0
+            ? comicRepository.GetAllComics()
+            : comicRepository.GetFiltered(filteredTags, filterType);
+
+        if (searchTerm is { } term)
+        {
+            query = query.Where(c => c.Name.Contains(term, StringComparison.InvariantCultureIgnoreCase)).ToList();
+        }
+
+        comics = new(query);
+    
         comics.OnElementInserted += (collection, item, index) => {
             var oldOrder = -1*item.Order;
             if (oldOrder < 0) return;
@@ -57,8 +66,23 @@ public sealed partial class MainWindow : Window
         };
         comics.OnElementRemoved += (_, item, index) => { item.Order *= -1;};
         ComicList.ItemsSource = comics;
-        ComicList.CanReorderItems = filteredTags.Count == 0;
+        ComicList.CanReorderItems = filteredTags.Count == 0 && searchTerm is null;
     }
+
+    #region Search
+    private void SearchKey(object sender, Microsoft.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        if (e.Key == VirtualKey.Enter)
+        {
+            e.Handled = true;
+            var search = SearchTextBox.Text.Trim();
+            searchTerm = string.IsNullOrWhiteSpace(search)
+                ? null
+                : search;
+            ReloadComics();
+        }
+    }
+    #endregion
 
     #region Buttons
     private void ButtonReload(object sender, RoutedEventArgs e)
@@ -85,7 +109,7 @@ public sealed partial class MainWindow : Window
             window.SetInitialTags(filteredTags, filterType);
         this.NavigateTo(window, () =>
         {
-            filteredTags = window.TagsSelected;
+            filteredTags = window.SelectedTags;
             filterType = window.Filter;
             ReloadComics();
         });
@@ -171,5 +195,4 @@ public sealed partial class MainWindow : Window
         Close();
     }
     #endregion
-
 }
