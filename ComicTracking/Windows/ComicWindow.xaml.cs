@@ -307,8 +307,7 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
         if (data.Length <= 0) goto end;
 
 
-        var path = ApplicationData.Current.TemporaryFolder.Path;
-        await Utils.ComicDisplayer.DisplayComic(path, file.Name, data);
+        Utils.ComicDisplayer.DisplayComic(file.Name, data);
     end:
         EndLoad();
     }

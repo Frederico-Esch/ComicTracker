@@ -10,7 +10,10 @@ namespace Utils;
 public class ComicDisplayer
 {
     [DllImport(@"comic_display.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    static extern void DisplayComic(nint name, UInt64 name_length, nint path, UInt64 path_length);
+    private static extern void DisplayComic(nint name, UInt64 name_length, nint path, UInt64 path_length);
+
+    [DllImport(@"comic_display.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static unsafe extern void DisplayComicMem(nint name, UInt64 name_length, byte* data, UInt64 data_length);
 
     public static async Task DisplayComic(string root_path, string name, byte[] comicData)
     {
@@ -27,5 +30,22 @@ public class ComicDisplayer
 
         if (File.Exists(path))
             File.Delete(path);
+    }
+
+    public static void DisplayComic(string name, byte[] comicData)
+    {
+        var name_ptr = Marshal.StringToHGlobalAnsi(name);
+        UInt64 name_length = (UInt64)name.Length;
+        UInt64 data_length = (UInt64)comicData.Length;
+
+        unsafe
+        {
+            fixed (byte* data = comicData)
+            {
+                DisplayComicMem(name_ptr, name_length, data, data_length);
+            }
+        }
+
+        Marshal.FreeHGlobal(name_ptr);
     }
 }

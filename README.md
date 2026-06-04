@@ -3,16 +3,16 @@
 ## Problems
 
 - WinUI3 feels very buggy and unfinished, it looks good, but that's about it
-- Release compilations don't work, trimming binaries breaks the code
+- ~Release compilations don't work, trimming binaries breaks the code~ Technically solved by configuring which binaries should be trimmed
 - Unpacked publishings don't work for some reason
 - Package keys are shared in this project, it shouldn't be, at least it's password protected, but ideally I shouldn't share it at all
 - WinUI3 is very bad.
-- Window handling is mostly done with WPF mentality, so it's clanky and I should've used pages instead
+- Window handling is mostly done with WPF mentality, so it's clanky and I should've used pages instead of windows
 - WINUI3 IS VERY BAD!
 
 ## Integrated with my CBZ Reader written in *Zig*
 
-Nice, fast and the best CBZ reader for desktop that I've used so far, so I'm proud. (Big comics can be a problem for old Graphics cause of the way I load textures, I haven't met a situation where I had to do lazy loading so far, but it is an improvement point, more info about this in [the reader github page](https://github.com/Frederico-Esch/Comic-Reader))
+Nice, fast and the best CBZ reader for desktop that I've used so far, so I'm proud. (Big comics can be a problem for old Graphics Cards cause of the way I load textures, I haven't met a situation where I had to do lazy loading so far, but it is an improvement point, more info about this in [the reader github page](https://github.com/Frederico-Esch/Comic-Reader))
 
 ## Screenshots
 
