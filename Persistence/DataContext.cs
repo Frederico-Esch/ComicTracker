@@ -41,14 +41,20 @@ namespace Persistence
             PRAGMA foreign_keys = off;
             BEGIN TRANSACTION;
 
+            -- Table: ComicFileData
+            CREATE TABLE IF NOT EXISTS ComicFileData (Id BLOB (16) PRIMARY KEY UNIQUE NOT NULL, ComicFileId BLOB (16) REFERENCES ComicFiles (Id) ON DELETE CASCADE UNIQUE NOT NULL, Data BLOB NOT NULL);
+
+            -- Table: ComicFiles
+            CREATE TABLE IF NOT EXISTS ComicFiles (Id BLOB (16) UNIQUE NOT NULL PRIMARY KEY, ComicId BLOB (16) REFERENCES Comics (Id) ON DELETE CASCADE NOT NULL, Name TEXT NOT NULL, IsFinished INTEGER (1) NOT NULL DEFAULT (0), "Order" INTEGER NOT NULL DEFAULT (0), CreateTime DATETIME DEFAULT (CURRENT_TIMESTAMP), FileType TEXT (3) NOT NULL DEFAULT ('CBZ'));
+
             -- Table: Comics
-            CREATE TABLE IF NOT EXISTS Comics (Id BLOB (16) PRIMARY KEY UNIQUE NOT NULL, Name TEXT NOT NULL, Info TEXT, Status INTEGER (2) CHECK (STATUS IN (0, 1, 2)) NOT NULL, Cover BLOB (16));
+            CREATE TABLE IF NOT EXISTS Comics (Id BLOB (16) PRIMARY KEY UNIQUE NOT NULL, Name TEXT NOT NULL, Details TEXT, Status INTEGER (2) CHECK (STATUS IN (0, 1, 2)) NOT NULL, Cover BLOB (16), "Order" INTEGER NOT NULL, CreateTime DATETIME DEFAULT (CURRENT_TIMESTAMP));
 
             -- Table: ComicTags
             CREATE TABLE IF NOT EXISTS ComicTags (Id BLOB (16) PRIMARY KEY UNIQUE NOT NULL, ComicId BLOB (16) REFERENCES Comics (Id) ON DELETE CASCADE NOT NULL, TagId BLOB (16) NOT NULL REFERENCES Tags (Id) ON DELETE CASCADE);
 
             -- Table: Tags
-            CREATE TABLE IF NOT EXISTS Tags (Id BLOB (16) PRIMARY KEY UNIQUE NOT NULL, Name TEXT UNIQUE NOT NULL, Color1 INTEGER (4) NOT NULL, Color2 INTEGER (4) NOT NULL, ColorText INTEGER (4) NOT NULL);
+            CREATE TABLE IF NOT EXISTS Tags (Id BLOB (16) PRIMARY KEY UNIQUE NOT NULL, Name TEXT UNIQUE NOT NULL, Color1 TEXT (9) NOT NULL, Color2 TEXT (9) NOT NULL, TextColor TEXT (9) NOT NULL);
 
             COMMIT TRANSACTION;
             PRAGMA foreign_keys = on;
@@ -166,10 +172,14 @@ namespace Persistence
                     .HasColumnName("ComicId")
                     .HasConversion(GuidToBytes, BytesToGuid);
 
+                model.Property(f => f.FileType)
+                    .HasColumnName("FileType")
+                    .HasConversion<string>();
+
                 model.HasOne(f => f.Data)
                     .WithOne(d => d.File)
                     .HasForeignKey<ComicFileData>(d => d.ComicFileId);
-                    
+
                     
             });
 

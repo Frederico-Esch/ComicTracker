@@ -250,14 +250,32 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
     private async void AddFile(object sender, RoutedEventArgs e)
     {
         await StartLoad();
-        var file = await this.OpenFilePickerAsync([".cbz"]);
+        var file = await this.OpenFilePickerAsync([".cbz"]); //TODO: Add support for CBR
         if (file.Content is not byte[] content || content.Length == 0)
         {
             EndLoad();
             return;
         }
-        
-        comicRepository.AddFile(content, file.Name, DataContext);
+
+        if (!Enum.TryParse<ComicFile.ComicFileType>(file.Extension, true, out var extension))
+        {
+            EndLoad();
+            var dialog = new ContentDialog()
+            {
+                Title = "Extension of file not recognized",
+                Content = $"Failed to load comic, file extension {file.Extension} not recognized",
+                CloseButtonText = "Ok",
+                PrimaryButtonText = "Delete",
+                IsSecondaryButtonEnabled = false,
+                IsPrimaryButtonEnabled = false,
+                DefaultButton = ContentDialogButton.Close
+            };
+            dialog.XamlRoot = Content.XamlRoot;
+            await dialog.ShowAsync();
+            return;
+        }
+
+        comicRepository.AddFile(content, file.Name, extension, DataContext);
         await unitOfWork.SaveAsync();
         DataContext = comicRepository.FindOne(DataContext.Id)!;
         EndLoad();

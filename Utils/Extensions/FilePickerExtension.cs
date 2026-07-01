@@ -57,6 +57,7 @@ public static class FilePickerExtension
     public struct NameAndFile
     {
         public string Name;
+        public string Extension;
         public byte[]? Content;
     }
 
@@ -77,6 +78,7 @@ public static class FilePickerExtension
         if (result == null) return file;
 
         file.Name = result.DisplayName;
+        file.Extension = result.FileType.Substring(1);
         using var fileStream = await result.OpenReadAsync();
         if (fileStream == null) return file;
 

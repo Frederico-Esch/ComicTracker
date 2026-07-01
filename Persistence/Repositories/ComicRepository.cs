@@ -57,7 +57,7 @@ internal class ComicRepository(DataContext context) : IComicRepository
             .FirstOrDefault(c => c.Id == id);
     }
 
-    public void AddFile(byte[] file, string name, Comic comic)
+    public void AddFile(byte[] file, string name, ComicFile.ComicFileType extension, Comic comic)
     {
         var data = new ComicFileData()
         {
@@ -69,6 +69,7 @@ internal class ComicRepository(DataContext context) : IComicRepository
             ComicId = comic.Id,
             Comic = comic,
             IsFinished = false,
+            FileType = extension,
             Order = comic.Files.Count > 0 ? comic.Files.Max(f => f.Order) + 1 : 1,
             Data = data
         };

@@ -17,7 +17,7 @@ namespace Persistence.Repositories
         public List<Comic> GetFiltered(List<Tag> tags, FilterType filter);
         public Comic? FindOne(Guid id);
 
-        public void AddFile(byte[] file, string name, Comic comic);
+        public void AddFile(byte[] file, string name, ComicFile.ComicFileType extension, Comic comic);
         public void DeleteFile(ComicFile file);
         public Task<byte[]> LoadComicDataAsync(ComicFile comicFile);
     }
