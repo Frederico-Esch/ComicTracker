@@ -24,6 +24,7 @@
     <None Remove="Assets\Square71x71Logo.scale-400.png" />
     <None Remove="UserControls\ComicCard.xaml" />
     <None Remove="UserControls\TagCard.xaml" />
+    <None Remove="UserControls\VolumeCard.xaml" />
     <None Remove="Windows\ComicWindow.xaml" />
     <None Remove="Windows\ManageTagsWindow.xaml" />
   </ItemGroup>
@@ -64,6 +65,9 @@
     <None Update="Assets\GenericComicBookCover.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Page Update="UserControls\VolumeCard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Windows\ComicWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>

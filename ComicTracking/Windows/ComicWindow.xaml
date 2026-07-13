@@ -122,6 +122,7 @@
                               SelectionChanged="FileSelected">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="domain:ComicFile">
+                                <!--
                                 <Grid ColumnSpacing="5">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="auto"/>
@@ -131,6 +132,8 @@
                                     <SymbolIcon Grid.Column="0" Symbol="Accept" Foreground="Lime" Visibility="Collapsed" Loaded="SymbolLoaded"/>
                                     <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}"/>
                                 </Grid>
+                                -->
+                                <uc:VolumeCard ComicFileIsFinished="{Binding IsFinished}" ComicFileName="{Binding Name}" DataContext="{Binding}"/>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
