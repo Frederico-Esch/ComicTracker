@@ -74,7 +74,7 @@ public static class FilePickerExtension
             filePicker.FileTypeFilter.Add(ext);
         InitializeWithWindow.Initialize(filePicker, WindowNative.GetWindowHandle(window));
 
-        var result = filePicker.PickSingleFileAsync().GetAwaiter().GetResult();
+        var result = await filePicker.PickSingleFileAsync();
         if (result == null) return file;
 
         file.Name = result.DisplayName;
@@ -86,5 +86,22 @@ public static class FilePickerExtension
         fileStream.AsStream().CopyTo(ms);
         file.Content = ms.ToArray();
         return file;
+    }
+
+    public static async Task<string> OpenSaveFileAsync(this Window window, string fileName, string fileExt, PickerLocationId pickerLocationId = PickerLocationId.DocumentsLibrary, PickerViewMode pickerViewMode = PickerViewMode.Thumbnail)
+    {
+        var filePicker = new FileSavePicker()
+        {
+            SuggestedStartLocation = pickerLocationId,
+            SuggestedFileName = $"{fileName}.{fileExt.ToLower()}",
+            CommitButtonText = "Save",
+            FileTypeChoices = {
+                new ("Comic File Type", [$".{fileExt.ToLower()}"])
+            }
+        };
+        InitializeWithWindow.Initialize(filePicker, WindowNative.GetWindowHandle(window));
+        var result = await filePicker.PickSaveFileAsync();
+
+        return result?.Path ?? string.Empty;
     }
 }

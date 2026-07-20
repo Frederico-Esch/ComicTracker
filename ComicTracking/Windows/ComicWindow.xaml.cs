@@ -325,8 +325,25 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
         if (data.Length <= 0) goto end;
 
 
+        //var path = ApplicationData.Current.TemporaryFolder.Path;
+        //await Utils.ComicDisplayer.DisplayComic(path, file.Name, data);
         Utils.ComicDisplayer.DisplayComic(file.Name, data);
     end:
+        EndLoad();
+    }
+
+    private async void DownloadFile(object sender, RoutedEventArgs e)
+    {
+        if (ListFiles.SelectedItem is not ComicFile file) return;
+        await StartLoad();
+
+        var data = await comicRepository.LoadComicDataAsync(file);
+        if (data.Length <= 0) goto end;
+
+        var location = await this.OpenSaveFileAsync(file.Name, file.FileType.ToString());
+        File.WriteAllBytes(location, data);
+
+        end:
         EndLoad();
     }
     #endregion
@@ -347,12 +364,14 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
             ReadButton.Visibility = Visibility.Collapsed;
             OpenButton.Visibility = Visibility.Collapsed;
             DeleteButton.Visibility = Visibility.Collapsed;
+            DownloadButton.Visibility = Visibility.Collapsed;
         }
         else {
             ReadButtonIcon.Foreground = file.IsFinished ? unreadBrush : finishedBrush;
             ReadButton.Visibility = Visibility.Visible;
             OpenButton.Visibility = Visibility.Visible;
             DeleteButton.Visibility = Visibility.Visible;
+            DownloadButton.Visibility = Visibility.Visible;
         }
     }
 

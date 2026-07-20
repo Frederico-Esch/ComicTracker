@@ -149,6 +149,11 @@
                                 Click="ReadFile">
                             <SymbolIcon x:Name="ReadButtonIcon" Symbol="View"/>
                         </Button>
+                        <Button x:Name="DownloadButton" Padding="8" Visibility="Collapsed"
+                                Foreground="MediumPurple"
+                                Click="DownloadFile">
+                            <SymbolIcon x:Name="DownloadButtonIcon" Symbol="Download"/>
+                        </Button>
                         <Button x:Name="OpenButton" Padding="8" Visibility="Collapsed"
                                 Background="SkyBlue" Foreground="Black"
                                 Click="OpenFile">
