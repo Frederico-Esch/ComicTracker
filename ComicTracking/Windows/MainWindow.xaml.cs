@@ -136,6 +136,11 @@ public sealed partial class MainWindow : Window
                 break;
             case ContentDialogResult.Primary:
                 comicRepository.Delete(comic);
+                var orderedComics = comics.Where(c => c.Id != comic.Id).OrderBy(c => c.Order).ToList();
+                for (int i = 0; i < orderedComics.Count; i++)
+                {
+                    orderedComics[i].Order = i + 1;
+                }
                 unitOfWork.Save();
                 ReloadComics();
                 break;

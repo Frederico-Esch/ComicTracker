@@ -302,6 +302,11 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
 
         await StartLoad();
         comicRepository.DeleteFile(file);
+        var volumes = DataContext.Files.Where(f => f.Id != file.Id).OrderBy(f => f.Order).ToList();
+        for (int i = 0; i < volumes.Count; i++)
+        {
+            volumes[i].Order = i + 1;
+        }
         await unitOfWork.SaveAsync();
         DataContext = comicRepository.FindOne(DataContext.Id)!;
         EndLoad();
