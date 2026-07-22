@@ -61,7 +61,7 @@
                     <userControls:ComicCard DataContext="{Binding Mode=OneWay}" AllowDrop="False">
                         <userControls:ComicCard.ContextFlyout>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Open"   Tag="open"   Icon="OpenLOcal" Click="ContextOpen"/>
+                                <MenuFlyoutItem Text="Open"   Tag="open"   Icon="OpenLocal" Click="ContextOpen"/>
                                 <MenuFlyoutItem Text="Edit"   Tag="edit"   Icon="Edit"      Click="ContextEdit"/>
                                 <MenuFlyoutItem Text="Delete" Tag="delete" Icon="Delete"    Click="ContextDelete"/>
                             </MenuFlyout>
