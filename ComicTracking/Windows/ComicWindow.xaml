@@ -133,7 +133,14 @@
                                     <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}"/>
                                 </Grid>
                                 -->
-                                <uc:VolumeCard ComicFileIsFinished="{Binding IsFinished}" ComicFileName="{Binding Name}" DataContext="{Binding}"/>
+                                <uc:VolumeCard ComicFileIsFinished="{Binding IsFinished}" ComicFileName="{Binding Name}" DataContext="{Binding}">
+                                    <uc:VolumeCard.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="Replace File" Tag="replace" Icon="OpenFile" Click="ContextReplace"/>
+                                            <MenuFlyoutItem Text="Rename"       Tag="rename"  Icon="Rename"   Click="ContextRename"/>
+                                        </MenuFlyout>
+                                    </uc:VolumeCard.ContextFlyout>
+                                </uc:VolumeCard>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>

@@ -353,6 +353,89 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
     }
     #endregion
 
+    #region Context Menu
+
+    private async void ContextReplace(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuFlyoutItem { DataContext: ComicFile comicFile }) return;
+        var file = await this.OpenFilePickerAsync([".cbz"]); //TODO: Support CBR
+
+        if (file.Content is not byte[] content || content.Length == 0) return;
+
+        var confirmDialog = new ContentDialog()
+        {
+            Title = "Are you sure?",
+            Content = $"Are you sure you want to replace the ComicFile from {comicFile.Name} with the contents of {file.Name}? This can not be undone",
+            CloseButtonText = "Cancel",
+            PrimaryButtonText = "Confirm",
+            IsSecondaryButtonEnabled = false,
+            DefaultButton = ContentDialogButton.Close
+        };
+        confirmDialog.XamlRoot = Content.XamlRoot;
+        var result = await confirmDialog.ShowAsync();
+        if (result != ContentDialogResult.Primary) return;
+
+        if (!Enum.TryParse<ComicFile.ComicFileType>(file.Extension, true, out var extension))
+        {
+            var errDialog = new ContentDialog()
+            {
+                Title = "Extension of file not recognized",
+                Content = $"Failed to load comic, file extension {file.Extension} not recognized",
+                CloseButtonText = "Ok",
+                PrimaryButtonText = "Delete",
+                IsSecondaryButtonEnabled = false,
+                IsPrimaryButtonEnabled = false,
+                DefaultButton = ContentDialogButton.Close
+            };
+            errDialog.XamlRoot = Content.XamlRoot;
+            await errDialog.ShowAsync();
+            return;
+        }
+
+        await StartLoad();
+        try
+        {
+            comicRepository.ReplaceFile(comicFile, file.Content, extension);
+            unitOfWork.Save();
+        }
+        finally
+        {
+            EndLoad();
+        }
+    }
+
+    private async void ContextRename(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuFlyoutItem { DataContext: ComicFile file }) return;
+        var textBox = new TextBox() { };
+        textBox.Text = file.Name;
+        var dialog = new ContentDialog()
+        {
+            Title = "Rename volume",
+            Content = textBox,
+            CloseButtonText = "Cancel",
+            PrimaryButtonText = "Save",
+            IsSecondaryButtonEnabled = false,
+            DefaultButton = ContentDialogButton.Close
+        };
+        dialog.XamlRoot = Content.XamlRoot;
+
+        await StartLoad();
+        try
+        {
+            var result = await dialog.ShowAsync();
+            if (result != ContentDialogResult.Primary || file.Name.Trim() == textBox.Text.Trim()) return;
+            file.Name = textBox.Text.Trim();
+            SaveButton.Visibility = Visibility.Visible;
+            DataContext = comicRepository.FindOne(DataContext.Id)!;
+        }
+        finally
+        {
+            EndLoad();
+        }
+    }
+    #endregion
+
     #region ListView style
     private void SymbolLoaded(object sender, RoutedEventArgs e)
     {

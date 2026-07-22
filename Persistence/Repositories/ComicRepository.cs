@@ -80,6 +80,15 @@ internal class ComicRepository(DataContext context) : IComicRepository
         //comic.Files.Add(comicFile);
     }
 
+    public void ReplaceFile(ComicFile comicFile, byte[] newFile, ComicFile.ComicFileType newExtension)
+    {
+        var comicFileData = context.ComicFileData.FirstOrDefault(cfd => cfd.ComicFileId == comicFile.Id);
+        if (comicFileData == null) return;
+
+        comicFileData.Data = newFile;
+        comicFile.FileType = newExtension;
+    }
+
     public void DeleteFile(ComicFile file)
     {
         context.ComicFiles.Remove(file);
