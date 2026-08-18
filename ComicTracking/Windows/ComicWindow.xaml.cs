@@ -257,6 +257,27 @@ public sealed partial class ComicWindow : Window, INotifyPropertyChanged
             return;
         }
 
+        if (content.Length > 1000000000)
+        {
+            var dialog = new ContentDialog()
+            {
+                Title = "Do you wish to cancel or try to save it anyway?",
+                Content = $"Current file is larger than what SQLite usually allows (1.000.000.000 bytes), it is {content.Length} bytes long.",
+                CloseButtonText = "Cancel",
+                PrimaryButtonText = "Try anyway",
+                IsSecondaryButtonEnabled = false,
+                IsPrimaryButtonEnabled = false,
+                DefaultButton = ContentDialogButton.Close
+            };
+            dialog.XamlRoot = Content.XamlRoot;
+            var result = await dialog.ShowAsync();
+            if (result == ContentDialogResult.None)
+            {
+                EndLoad();
+                return;
+            }
+        }
+
         if (!Enum.TryParse<ComicFile.ComicFileType>(file.Extension, true, out var extension))
         {
             EndLoad();
