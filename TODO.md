@@ -10,3 +10,4 @@
 8.  [ ] Consider keeping windows visible, but "disabling them" like I do with the loading screen
 9.  [ ] Change every instance of "Volume" with "Issue" (a better translation)
 10. [ ] Load cover for issues.
+11. [ ] For files that are too large save them as a sequence, put a new column in ComicFileData (a "NextId" column) that links one ComicFileData to another, in chunks of max 1.000.000.000 bytes, when saving or loading them just split the file or glue it together.
